@@ -6,7 +6,7 @@ ui.gadgets.book-extras ui.gadgets.borders ui.gadgets.buttons
 ui.gadgets.editors ui.gadgets.grids ui.gadgets.labels
 ui.gadgets.menus ui.gadgets.tracks namespaces fr8x-data 
 models.arrow models.arrow.smart combinators combinators.short-circuit 
-io strings io.encodings.utf8 io.files splitting colors.constants 
+io strings io.encodings.utf8 io.files splitting colors
 ui.pens.solid ui.gadgets.glass ui.gadgets.scrollers ui.gadgets.tables ;
 IN: fr8x-ui
 FROM: models => change-model ;
@@ -95,7 +95,7 @@ SYMBOL: midireedindex
     [
          [
             "Reed" <blabel> ,
-	    "Voice" <blabel> , 
+            "Voice" <blabel> , 
             risky? [ "CC00" <blabel> , "CC32" <blabel> , "PC" <blabel> , ] when 
             "Enable" <blabel> ,
             "Cassotto" <blabel> ,
@@ -133,9 +133,10 @@ SYMBOL: midireedindex
 
 :: treble-editor ( model -- gadgets ) 
     vertical <track>
-    register-buttons [ f track-add ] [ model>> ] bi                     
+    register-buttons [ f track-add ] [ model>> ] bi
     model [ "TR" get-chunk ] <arrow> reed-editor f track-add
-    0 midireednames get-global [ length iota ] [ values ] bi zip [ . ] <drop-button> f track-add ;
+    0 midireednames get-global [ length <iota> ] [ values ] bi zip
+    [ . ] <drop-button> f track-add ;
 
 : editor-layout ( model -- gadget )
     [ [ treble-editor , ] keep ] { } make <book*> { 5 5 } <border> swap >>model ;
@@ -155,7 +156,7 @@ SYMBOL: midireedindex
     prefix ;
 
 : make-reed-index ( reeds -- reedindex )
-   [ length iota ] [ values ] bi zip
+   [ length <iota> ] [ values ] bi zip
    { -1 "(Displaced reed)" } suffix
    { -2 "(Non-reed voice)" } suffix 
    { -3 "(Unknown MIDI patch)" } suffix ;

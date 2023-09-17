@@ -3,15 +3,12 @@
 USING: accessors assocs fry kernel locals make math math.parser
 models multiline prettyprint sequences system namespaces fr8x-data 
 combinators combinators.short-circuit io strings io.encodings.utf8 
-io.files splitting colors.constants gtk gtk.ffi alien.strings io.encodings.utf8 
+io.files splitting colors gtk2 gtk2.ffi alien.strings io.encodings.utf8 
 gobject.ffi ;
 
 IN: fr8x-ui-gtk
 
 : s>gs ( string -- gstring ) utf8 string>alien ;
-
-
-
 
 SYMBOL: midireednames
 SYMBOL: risky
@@ -32,8 +29,9 @@ SYMBOL: midireedindex
     { 8 "Unknown Extra Reed 2" } } at* drop ;
 
 : bool>bin ( bool -- bin ) 1 0 ? ;
+
 : bin>bool ( bin -- bool ) 1 = ;
-     
+
 : raw-voice-name ( num -- name ) number>string "Voice " prepend ;
 
 : midipatch>reed ( midipatch -- reedindex reeddata ) 
@@ -46,15 +44,11 @@ SYMBOL: midireedindex
 !    dup midipatch>reed swap [ reed-in-right-place? ] keep swap 
 !    [ drop -1 ] unless ;
 
-
-
 : readln-skipcomments ( -- line )
     f [ dup { [ string? not ] [ first CHAR: # = not ] } 1|| ] [ drop readln ] do until ; 
 
-
 : parse-midivoice ( str -- tuple )
     " " split [ string>number ] map ;
-
 
 : parse-midireed ( name -- reeddata ) 
     { } swap suffix
@@ -62,18 +56,16 @@ SYMBOL: midireedindex
     prefix ;
 
 : make-reed-index ( reeds -- reedindex )
-   [ length iota ] [ values ] bi zip
+   [ length <iota> ] [ values ] bi zip
    { -1 "(Displaced reed)" } suffix
    { -2 "(Non-reed voice)" } suffix 
    { -3 "(Unknown MIDI patch)" } suffix ;
 
-    
 : parse-midi-reed-data ( -- reeddata )  
     [ readln-skipcomments dup ] [ parse-midireed ] produce nip ;
 
 : load-midi-reed-data ( -- reeddata ) 
     "vocab:fr8x-data/midireeds.txt" utf8 [ parse-midi-reed-data ] with-file-reader ;
-
 
 STRING: warning-text
 Warning: This open source software is provided 'as-is' without
@@ -89,19 +81,17 @@ this software and generated sets entirely at your own risk.
   16 [ 1 + number>string s>gs gtk_button_new_with_label f f 2 gtk_box_pack_start dup ] each-integer
   drop ;
 
-
 : editor-window ( -- gadget ) 
-   GTK_WINDOW_TOPLEVEL gtk_window_new
-   dup "FR8X Set Editor" s>gs gtk_window_set_title
-   dup 300 200 gtk_window_set_default_size
-   dup GTK_WIN_POS_CENTER gtk_window_set_position
-   dup gtk_notebook_new
-     dup f 2 gtk_vbox_new
-       dup register-selector f f 2 gtk_box_pack_start
-     "Accordion" s>gs gtk_label_new gtk_notebook_append_page drop
-   dup "destroy" s>gs [ 2drop gtk_main_quit ] GtkObject:destroy f g_signal_connect drop  
-   gtk_container_add ;
-   
+    GTK_WINDOW_TOPLEVEL gtk_window_new
+    dup "FR8X Set Editor" s>gs gtk_window_set_title
+    dup 300 200 gtk_window_set_default_size
+    dup GTK_WIN_POS_CENTER gtk_window_set_position
+    dup gtk_notebook_new
+    dup f 2 gtk_vbox_new
+    dup register-selector f f 2 gtk_box_pack_start
+    "Accordion" s>gs gtk_label_new gtk_notebook_append_page drop
+    dup "destroy" s>gs [ 2drop gtk_main_quit ] GtkObject:destroy f g_signal_connect drop  
+    gtk_container_add ;
 
 : start-editor ( -- )
     load-midi-reed-data dup midireednames set-global
@@ -125,9 +115,9 @@ this software and generated sets entirely at your own risk.
       f f 2 gtk_box_pack_start
     gtk_container_add ;
 
-
-
 : main ( -- )
-   f f gtk_init
-   warning-window gtk_widget_show_all 
-   gtk_main ;
+    f f gtk_init
+    warning-window gtk_widget_show_all 
+    gtk_main ;
+
+MAIN: main

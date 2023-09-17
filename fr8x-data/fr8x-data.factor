@@ -11,10 +11,10 @@ RENAME: read bitstreams => bsread
 IN: fr8x-data
 
 TUPLE: chunkinfo
-{ name string }
-{ size integer }
-{ count integer }
-{ offset integer } ;
+    { name string }
+    { size integer }
+    { count integer }
+    { offset integer } ;
 
 ERROR: loading-error desc ;
 
